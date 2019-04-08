@@ -15,7 +15,7 @@ if __name__ == '__main__':
         name='atomtools',
         version=get_version(),
         description=(
-            'tool collection for parsing vasp inputs & outputs'
+            'basic atom tools collection'
         ),
         long_description=open('README.md').read(),
         long_description_content_type='text/markdown',
