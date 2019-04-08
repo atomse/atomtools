@@ -20,7 +20,7 @@ travisinstall:
 	python setup.py install
 
 test:
-	bash -c "export PYTHONPATH="$(PWD)"; coverage run --source atomtools ./atomtools/test.py" 
+	bash -c "export PYTHONPATH="$(PYTHONPATH)":"$(PWD)"; coverage run --source atomtools ./atomtools/test.py" 
 	echo `which atomtools`
 	# coverage run --source atomtools `which atomtools` -h
 	# coverage run --source atomtools `which atomtools` LISTSUBCOMMAND

@@ -4,6 +4,7 @@ atom tools collection
 
 __all__ = [
     'get_distance_matrix',
+    'get_contact_matrix',
     'dist_change_matrix',
     'input_standard_pos_transform',
 ]
@@ -12,7 +13,7 @@ import math
 import numpy as np
 from numpy.linalg import norm
 import itertools
-
+import chemdata
 
 EXTREME_SMALL = 1e-5
 
@@ -350,6 +351,23 @@ def dist_change_matrix(positions, dpos, debug=False):
     return dists1 - dists0
 
 
+def get_contact_matrix(positions, numbers=None, bonding_distance_matrix=None,
+        n = 6, m = 12, debug=False):
+    if bonding_distance_matrix is None:
+        if hasattr(positions, 'numbers'):
+            numbers = positions.numbers
+        assert numbers is not None
+        bonding_distance_matrix = np.array([chemdata.get_element_covalent(x) for x in numbers])
+        bonding_distance_matrix = bonding_distance_matrix.reshape((1, -1)) + bonding_distance_matrix.reshape((-1, 1))
+        # bonding_distance_matrix *= 0
+    # print('positions', positions)
+    positions = get_positions(positions)
+    distance_matrix = get_distance_matrix(positions, debug)
+    rx = distance_matrix / bonding_distance_matrix
+    contact_matrix = (1 - np.power(rx, n)) / (1 - np.power(rx, m))
+    if debug:
+        print('distance_matrix:', distance_matrix, '\n', 'bonding_distance_matrix:', bonding_distance_matrix)
+    return contact_matrix
 
 def freq_dist_change_mat(XX, positions, debug=False):
     XX = XX.copy()

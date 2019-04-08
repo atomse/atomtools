@@ -1,11 +1,12 @@
 """
 test atomtools
 """
-
+import os
 import numpy as np
 import atomtools
 
-    
+
+BASEDIR= os.path.dirname(os.path.abspath(__file__))
 np.set_printoptions(precision=3, suppress=True, linewidth=100)
 
 class Test_Atoms(object):
@@ -102,12 +103,35 @@ def test_zmat():
         case.update({'debug' : True, 'std_vec' : case['inp_pos'][0:2]})
         print(atomtools.input_standard_pos_transform(**case))
 
-
+def test_get_contact_matrix():
+    import ase.build
+    import atomse.io
+    test_cases = [
+        {
+            'positions' : ase.build.molecule('CH4')
+        },
+        {
+            'positions' : ase.build.molecule('HCN')
+        },
+        {
+            'positions' : ase.build.molecule('C6H6')
+        },
+        {
+            'positions' : ase.build.molecule('H2CO')
+        },
+        {
+            'positions' : atomse.io.read(BASEDIR+'/../test_cases/6.log')
+        },
+    ]
+    for case in test_cases:
+        case.update({'debug' : True,})
+        print('get_contact_matrix', atomtools.get_contact_matrix(**case))
 
 def test():
     print(atomtools.__file__)
     print(atomtools.version())
     test_get_distance_matrix()
+    test_get_contact_matrix()
     # test_zmat()
 
 
