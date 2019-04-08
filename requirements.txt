@@ -1,1 +1,2 @@
 numpy>=1.13.0
+chemdata>=1.0.0

@@ -4,13 +4,14 @@ atom tools collection
 
 __all__ = [
     'get_distance_matrix',
+    'dist_change_matrix',
     'input_standard_pos_transform',
 ]
 
 import math
 import numpy as np
 from numpy.linalg import norm
-from itertools import combinations
+import itertools
 
 
 EXTREME_SMALL = 1e-5
@@ -37,22 +38,25 @@ def get_positions(positions):
         positions = positions.positions
     return np.array(positions).reshape((-1, 3))
 
-def get_distance(positions, i, j):
-    positions = get_positions(positions)
-    return norm(positions[i]-positions[j])
-
 def normed(v):
     v = np.array(v)
     if norm(v) < EXTREME_SMALL:
         return v
     return v/norm(v)
 
+def vector_angle(a, b, debug=False):
+    return acos(np.dot(a, b)/(norm(a)*norm(b)))
+
+def get_distance(positions, i, j):
+    positions = get_positions(positions)
+    return norm(positions[i]-positions[j])
+
 def get_angle(positions, i, j, k):
     positions = get_positions(positions)
-    v1 = normed(positions[i] - positions[j])
-    v2 = normed(positions[k] - positions[j])
-    return acos(v1.dot(v2))
-
+    v1 = positions[i] - positions[j]
+    v2 = positions[k] - positions[j]
+    return acos(normed(v1).dot(normed(v2)))
+    return vector_angle(v1, v2)
 def get_dihedral(positions, i, j, k, l):
     positions = get_positions(positions)
     v1 = normed(positions[i] - positions[j])
@@ -247,9 +251,6 @@ def rotate_site_angle(site_angle, theta, phi, debug=False):
 
 
 
-def vector_angle(a, b, debug=False):
-    return acos(np.dot(a, b)/(norm(a)*norm(b)))
-
 
 
 def input_standard_pos_transform(inp_pos, std_pos, t_vals,
@@ -318,17 +319,31 @@ def input_standard_pos_transform(inp_pos, std_pos, t_vals,
 
 
 
+def get_X_Y_dist_matrix(X, Y=None):
+    if Y is None:
+        Y = X
+    return np.sum(np.square(X), axis = 1).reshape((-1, 1)) \
+        + np.sum(np.square(Y), axis = 1).reshape((1, -1)) - 2 * np.dot(X, Y.T)
+
+
 def get_distance_matrix(positions, debug=False):
-    positions = np.array(positions).reshape((-1, 3))
-    dists = np.sum(np.square(positions), axis = 1) \
-        + np.transpose([np.sum(np.square(positions), axis = 1)]) - 2 * np.dot(positions, positions.T)
-    dists = np.sqrt(abs(dists))
-    np.fill_diagonal(dists, 0)
-    return dists
+    cell = None
+    if hasattr(positions, 'cell'):
+        cell = positions.cell
+    positions = get_positions(positions)
+    dist_matrix = get_X_Y_dist_matrix(positions)
+    if cell is not None:
+        for index in itertools.product([-1, 0, 1], [-1, 0, 1], [-1, 0, 1]):
+            mpositions = positions + np.sum(cell * index, axis=0)
+            dist_matrix = np.min((dist_matrix, get_X_Y_dist_matrix(mpositions, positions)), axis=0)
+            # print(dist_matrix)
+    dist_matrix = np.sqrt(abs(dist_matrix))
+    np.fill_diagonal(dist_matrix, 0)
+    return dist_matrix
 
 
-def dist_change_mat(positions, dpos, debug=False):
-    dpos = dpos.copy()
+def dist_change_matrix(positions, dpos, debug=False):
+    # dpos = dpos.copy()
     positions = positions.copy()
     dists0 = get_distance_matrix(positions)
     dists1 = get_distance_matrix(dpos+positions)

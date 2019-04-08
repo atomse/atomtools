@@ -8,7 +8,7 @@ all:
 
 
 build:
-	rm -rf build/ sdist/ dist/ chemdata-*/ chemdata.egg-info/
+	rm -rf build/ sdist/ dist/ atomtools-*/ atomtools.egg-info/
 	python setup.py sdist build
 	python setup.py bdist_wheel --universal
 	twine check dist/*
@@ -20,11 +20,11 @@ travisinstall:
 	python setup.py install
 
 test:
-	coverage run --source chemdata ./chemdata/test.py 
-	echo `which chemdata`
-	# coverage run --source chemdata `which chemdata` -h
-	# coverage run --source chemdata `which chemdata` LISTSUBCOMMAND
-	# coverage run --source chemdata `which chemdata` LISTSUBCOMMAND | xargs -n 1 -I [] bash -c '(coverage run --source chemdata `which chemdata` [] -h >/dev/null 2>&1 || echo ERROR: [])'
+	bash -c "export PYTHONPATH="$(PWD)"; coverage run --source atomtools ./atomtools/test.py" 
+	echo `which atomtools`
+	# coverage run --source atomtools `which atomtools` -h
+	# coverage run --source atomtools `which atomtools` LISTSUBCOMMAND
+	# coverage run --source atomtools `which atomtools` LISTSUBCOMMAND | xargs -n 1 -I [] bash -c '(coverage run --source atomtools `which atomtools` [] -h >/dev/null 2>&1 || echo ERROR: [])'
 	coverage report -m
 
 test_env:
@@ -37,7 +37,6 @@ test_env:
 	pip install -r requirements.txt; \
 	make build; \
 	make travisinstall; \
-	cd /tmp;\
 	make test'
 	
 upload:
