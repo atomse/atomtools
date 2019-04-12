@@ -42,3 +42,5 @@ test_env:
 upload:
 	twine upload dist/*
 
+clean:
+	rm -rf venv build *.egg-info dist

@@ -1,20 +1,21 @@
 """
-atom tools collection
+independent chemical symbols
 """
 
-__all__ = [
-    'get_distance_matrix',
-    'get_contact_matrix',
-    'dist_change_matrix',
-    'input_standard_pos_transform',
-]
 
+__version__ = '1.1.1'
+def version():
+    return __version__
+
+
+import os
 import math
 import numpy as np
 from numpy.linalg import norm
 import itertools
 import chemdata
 
+BASEDIR = os.path.dirname(os.path.abspath(__file__))
 EXTREME_SMALL = 1e-5
 
 
@@ -33,6 +34,14 @@ def acos(result, arc = False, debug=False):
 def asin(result, arc = False, debug=False):
     factor = 1 if arc else 180.0/math.pi
     return math.asin(result) * factor
+
+def randString(num=10):
+    string = 'zyxwvutsrqponmlkjihgfedcba'+'zyxwvutsrqponmlkjihgfedcba'.upper()+'0123456789'
+    ran_str = ''.join(random.sample(string, num))
+    return ran_str
+
+def get_atoms_name(atoms):
+    return '{0}_{1}'.format(atoms.get_chemical_formula(), randString())
 
 def get_positions(positions):
     if hasattr(positions, 'positions'):
