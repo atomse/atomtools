@@ -4,6 +4,7 @@ test atomtools
 import os
 import numpy as np
 import atomtools
+import ase.build
 
 
 BASEDIR= os.path.dirname(os.path.abspath(__file__))
@@ -104,7 +105,6 @@ def test_zmat():
         print(atomtools.input_standard_pos_transform(**case))
 
 def test_get_contact_matrix():
-    import ase.build
     # import atomse.io
     test_cases = [
         {
@@ -128,15 +128,23 @@ def test_get_contact_matrix():
         print('get_contact_matrix', atomtools.get_contact_matrix(**case))
 
 def test_get_atoms_name():
-    import ase.build
     x = ase.build.molecule("CH4")
     print(atomtools.get_atoms_name(x))
+
+
+def test_get_atoms_size():
+    x = ase.build.molecule("CH4")
+    print(atomtools.get_atoms_size(x))
+
+
+
 def test():
     print(atomtools.__file__)
     print(atomtools.version())
     test_get_distance_matrix()
     test_get_contact_matrix()
     test_get_atoms_name()
+    test_get_atoms_size()
     # test_zmat()
 
 

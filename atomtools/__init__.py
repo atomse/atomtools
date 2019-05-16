@@ -3,7 +3,7 @@ independent chemical symbols
 """
 
 
-__version__ = '1.2.1'
+__version__ = '1.3.0'
 def version():
     return __version__
 
@@ -411,4 +411,12 @@ def Rotation_matrix(k, theta, radians = False, debug=False):
 
 
 
-
+def get_atoms_size(positions):
+    if hasattr(positions, 'positions'):
+        positions = positions.positions
+    assert isinstance(positions, (np.ndarray, list)), 'Please give Atoms, list or ndarray'
+    positions = np.array(positions).reshape((-1, 3))
+    size = [0.] * 3
+    for i in range(3):
+        size[i] = positions[:,i].max() - positions[:,i].min()
+    return tuple(size)
