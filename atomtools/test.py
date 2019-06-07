@@ -139,8 +139,8 @@ def test_get_atoms_size():
 
 
 def test():
-    print(atomtools.geo.__file__)
-    print(atomtools.geo.version())
+    print(atomtools.__file__)
+    print(atomtools.version())
     test_get_distance_matrix()
     test_get_contact_matrix()
     test_get_atoms_name()
