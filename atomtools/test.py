@@ -51,9 +51,9 @@ def test_get_distance_matrix():
 
     for case in test_cases:
         case.update({'debug' : True})
-        print(atomtools.get_distance_matrix(**case))
+        print(atomtools.geo.get_distance_matrix(**case))
 
-    print(atomtools.dist_change_matrix(test_cases[0]['positions'], 1))
+    print(atomtools.geo.dist_change_matrix(test_cases[0]['positions'], 1))
 
 def test_zmat():
     """
@@ -102,7 +102,7 @@ def test_zmat():
 
     for case in test_cases:
         case.update({'debug' : True, 'std_vec' : case['inp_pos'][0:2]})
-        print(atomtools.input_standard_pos_transform(**case))
+        print(atomtools.geo.input_standard_pos_transform(**case))
 
 def test_get_contact_matrix():
     # import atomse.io
@@ -125,22 +125,22 @@ def test_get_contact_matrix():
     ]
     for case in test_cases:
         case.update({'debug' : True,})
-        print('get_contact_matrix', atomtools.get_contact_matrix(**case))
+        print('get_contact_matrix', atomtools.geo.get_contact_matrix(**case))
 
 def test_get_atoms_name():
     x = ase.build.molecule("CH4")
-    print(atomtools.get_atoms_name(x))
+    print(atomtools.geo.get_atoms_name(x))
 
 
 def test_get_atoms_size():
     x = ase.build.molecule("CH4")
-    print(atomtools.get_atoms_size(x))
+    print(atomtools.geo.get_atoms_size(x))
 
 
 
 def test():
-    print(atomtools.__file__)
-    print(atomtools.version())
+    print(atomtools.geo.__file__)
+    print(atomtools.geo.version())
     test_get_distance_matrix()
     test_get_contact_matrix()
     test_get_atoms_name()

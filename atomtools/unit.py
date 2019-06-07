@@ -20,6 +20,12 @@ UNITS = {
         ATOMIC_UNIT : 5.29177210904*1e-11,
     },
 
+    "MASS_UNITS" : {
+        "kg" : 1,
+        ATOMIC_UNIT : 9.1093837015*1e-31,
+    },
+
+
     "ENERGY_UNITS" : {
         "j" : 1,
         'kj' : 1e3,
@@ -49,13 +55,13 @@ UNITS = {
 }
 
 
-def get_au(length):
+def get_atomic_unit(length):
     if length == 1:
-        return 
+        return ATOMIC_UNIT
     return [ATOMIC_UNIT] * length
 
 
-def trans_unit(src, dest, unit):
+def trans_basic_unit(src, dest, unit):
     """
     general function for unit transformation
     """
@@ -80,7 +86,7 @@ def trans_length(src, dest="Ang"):
     >>> abs(trans_length("bohr", "ang") - 0.529177210904) < 1e-5
     True
     """
-    return trans_unit(src, dest, unit="length")
+    return trans_basic_unit(src, dest, unit="length")
 
 def trans_energy(src, dest="eV"):
     """
@@ -91,20 +97,20 @@ def trans_energy(src, dest="eV"):
     >>> abs(trans_energy("kcal", "cal")- 1000) < 1e-5
     True
     """
-    return trans_unit(src, dest, unit="energy")
+    return trans_basic_unit(src, dest, unit="energy")
 
-def trans_atom_energy(src, dest="eV"):
+def trans_atomic_energy(src, dest="eV"):
     """
-    >>> abs(trans_atom_energy("hartree") - 27.211386245988653) < 1e-5
+    >>> abs(trans_atomic_energy("hartree") - 27.211386245988653) < 1e-5
     True
-    >>> abs(trans_atom_energy("kJ/mol", "eV") - 1/96.485) < 1e-5
+    >>> abs(trans_atomic_energy("kJ/mol", "eV") - 1/96.485) < 1e-5
     True
-    >>> abs(trans_atom_energy("kcal/mol", "au") - 1/627.50) < 1e-5
+    >>> abs(trans_atomic_energy("kcal/mol", "au") - 1/627.50) < 1e-5
     True
     """
     src = (src+'/1').split("/")[:2]
     dest = (dest+'/1').split("/")[:2]
-    return trans_unit(src[0], dest[0], "energy") / trans_unit(src[1], dest[1], "number")
+    return trans_basic_unit(src[0], dest[0], "energy") / trans_basic_unit(src[1], dest[1], "number")
 
 def trans_velocity(src, dest="ang/ps"):
     """
@@ -117,14 +123,17 @@ def trans_velocity(src, dest="ang/ps"):
     """
     SEG_LENGTH = 2
     if src == ATOMIC_UNIT: 
-        src = [src] * SEG_LENGTH
-    elif dest == ATOMIC_UNIT:
+        src = get_atomic_unit(SEG_LENGTH)
+    else:
+        src = src.split("/")
+    assert len(src) == SEG_LENGTH
+        
+    if dest == ATOMIC_UNIT:
         dest = [dest] * SEG_LENGTH
-    src = src.split("/")
-    assert len(src) == 2
-    dest = dest.split("/")
-    assert len(dest) == 2
-    return trans_unit(src[0], dest[0], "length") / trans_unit(src[1], dest[1], "time")
+    else:
+        dest = dest.split("/")
+    assert len(dest) == SEG_LENGTH
+    return trans_basic_unit(src[0], dest[0], "length") / trans_basic_unit(src[1], dest[1], "time")
 
 
 
@@ -136,21 +145,41 @@ def test():
             "function" : trans_length,
             "src" : "ang",
             "dest" : "ang",
+            "exp" : 1,
         },
         {
             "function" : trans_length,
             "src" : "nm",
             "dest" : "ang",
+            "exp" : 10,
         },
         {
             "function" : trans_length,
             "src" : "nm",
             "dest" : "fm",
+            "exp" : 1e6,
         },
         {
             "function" : trans_length,
             "src" : "ang",
-            "dest" : "ang",
+            "dest" : "au",
+            "exp" : 1/0.529,
         },
 
     ]
+
+    for case in cases:
+        func = case['function']
+        src  = case['src']
+        dest = case['dest']
+        exp  = case['exp']
+        print(func(src, dest)-exp < 1e-5)
+
+
+
+if __name__ == '__main__':
+    test()
+
+
+
+
