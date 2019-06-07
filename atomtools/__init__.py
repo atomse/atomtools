@@ -15,6 +15,11 @@ import numpy as np
 from numpy.linalg import norm
 import itertools
 import chemdata
+from . import unit
+
+
+
+
 
 BASEDIR = os.path.dirname(os.path.abspath(__file__))
 EXTREME_SMALL = 1e-5
@@ -213,60 +218,6 @@ def rotate_site_angle(site_angle, theta, phi, debug=False):
     return site_angle
 
 
-# def transform_ijk(pos_o, pos_i, vector, direction = 'to_ijk', debug=False):
-#     assert(direction in ['to_ijk', 'to_xyz'])
-#     pos_o = np.array(pos_o)
-#     pos_i = np.array(pos_i)
-#     if direction == 'to_ijk':
-#         return np.dot(pos_i - pos_o, np.asarray(np.mat(vector).T))
-#     elif direction == 'to_xyz':
-#         return np.dot(pos_i, np.array(vector)) + pos_o
-
-
-# def get_cartesian_ijk(pos_o, pos_z, pos_x = None, debug=False):
-#     pos_o = np.array(pos_o)
-#     pos_z = np.array(pos_z)
-#     if not pos_x is None:
-#         pos_x = np.array(pos_x)
-#     v_z = pos_z - pos_o
-#     if norm(v_z) < 0.01:
-#         # print('get_cartesian_ijk norm too small, maybe linear')
-#         return np.eye(3)
-#     k = v_z / np.linalg.norm(v_z)
-#     if pos_x is None:
-#         pos_x = np.array([np.random.random(), np.random.random(), np.random.random()])
-#         #pos_x = np.array([100, 80, 60])
-#     v_ox = pos_x - pos_o
-#     v_x = v_ox - np.dot(v_ox, k) * k
-#     if ((v_x==np.array([0,0,0])).all()):
-#         pos_x = np.array([np.random.random(), np.random.random(), np.random.random()])
-#         v_ox = pos_x - pos_o
-#         v_x = v_ox - np.dot(v_ox, k) * k
-#     i = v_x / np.linalg.norm(v_x)
-#     j = np.cross(k, i)
-#     return (i, j, k)
-
-
-
-# def get_cartesian_ijk_with_sphere(pos0, pos1, pos2, angle1, angle2, debug=False):
-#     vec1  = pos1 - pos0
-#     vec2  = pos2 - pos0
-#     cvec1 = vec1/norm(vec1)
-#     cvec2 = vec2/norm(vec2)
-#     cvec3 = np.cross(cvec1, cvec2)
-#     svec1 = spherical_to_cartesian([0,0,0],1,angle1)
-#     svec2 = spherical_to_cartesian([0,0,0],1,angle2)
-#     svec3 = np.cross(svec1, svec2)
-#     angle_diff = abs(vector_angle(svec1, svec2)-vector_angle(cvec1, cvec2))
-#     # print('angle_diff:', angle_diff)
-#     sx, sy, sz = np.linalg.solve([svec1, svec2, svec3], np.eye(3))
-#     cx, cy, cz = np.dot([sx,sy,sz], [cvec1, cvec2, cvec3])
-#     return get_cartesian_ijk([0,0,0],cz,cx), angle_diff
-
-
-
-
-
 def input_standard_pos_transform(inp_pos, std_pos, t_vals,
         std_to_inp=True, is_coord = False, debug=False):
     t_vals  = np.array(t_vals).copy()
@@ -330,7 +281,6 @@ def input_standard_pos_transform(inp_pos, std_pos, t_vals,
             return np.dot(t_vals - std_O, R_mat) + inp_O
         else:
             return np.dot(t_vals - inp_O, np.linalg.inv(R_mat)) + std_O
-
 
 
 def get_X_Y_dist_matrix(X, Y=None):
