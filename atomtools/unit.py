@@ -88,24 +88,24 @@ def trans_length(src, dest="Ang"):
     """
     return trans_basic_unit(src, dest, unit="length")
 
-def trans_energy(src, dest="eV"):
+def trans_abs_energy(src, dest="eV"):
     """
-    >>> abs(trans_energy("ev") - 1.) < 1e-5
+    >>> abs(trans_abs_energy("ev") - 1.) < 1e-5
     True
-    >>> abs(trans_energy("eV", "hartree") - 0.0367493) < 1e-5
+    >>> abs(trans_abs_energy("eV", "hartree") - 0.0367493) < 1e-5
     True
-    >>> abs(trans_energy("kcal", "cal")- 1000) < 1e-5
+    >>> abs(trans_abs_energy("kcal", "cal")- 1000) < 1e-5
     True
     """
     return trans_basic_unit(src, dest, unit="energy")
 
-def trans_atomic_energy(src, dest="eV"):
+def trans_energy(src, dest="eV"):
     """
-    >>> abs(trans_atomic_energy("hartree") - 27.211386245988653) < 1e-5
+    >>> abs(trans_energy("hartree") - 27.211386245988653) < 1e-5
     True
-    >>> abs(trans_atomic_energy("kJ/mol", "eV") - 1/96.485) < 1e-5
+    >>> abs(trans_energy("kJ/mol", "eV") - 1/96.485) < 1e-5
     True
-    >>> abs(trans_atomic_energy("kcal/mol", "au") - 1/627.50) < 1e-5
+    >>> abs(trans_energy("kcal/mol", "au") - 1/627.50) < 1e-5
     True
     """
     src = (src+'/1').split("/")[:2]

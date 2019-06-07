@@ -1,4 +1,6 @@
-
+"""
+atomtools for geometry
+"""
 import os
 import math
 import random
@@ -6,7 +8,6 @@ import numpy as np
 from numpy.linalg import norm
 import itertools
 import chemdata
-from . import unit
 
 
 
@@ -47,6 +48,18 @@ def get_positions(positions):
     if hasattr(positions, 'positions'):
         positions = positions.positions
     return np.array(positions).reshape((-1, 3))
+
+
+def get_atoms_size(positions):
+    if hasattr(positions, 'positions'):
+        positions = positions.positions
+    assert isinstance(positions, (np.ndarray, list)), 'Please give Atoms, list or ndarray'
+    positions = np.array(positions).reshape((-1, 3))
+    size = [0.] * 3
+    for i in range(3):
+        size[i] = positions[:,i].max() - positions[:,i].min()
+    return tuple(size)
+
 
 def normed(v):
     v = np.array(v)
@@ -321,14 +334,14 @@ def get_contact_matrix(positions, numbers=None, bonding_distance_matrix=None,
         print('distance_matrix:', distance_matrix, '\n', 'bonding_distance_matrix:', bonding_distance_matrix)
     return contact_matrix
 
-def freq_dist_change_mat(XX, positions, debug=False):
+def freq_dist_change_matrix(XX, positions, debug=False):
     XX = XX.copy()
     dists0 = get_distance_matrix(positions)
     return np.array([get_distance_matrix(x) for x in XX+positions]) - dists0
 
 
 
-def Rotation_matrix(k, theta, radians = False, debug=False):
+def get_rotation_matrix(k, theta, radians = False, debug=False):
     """  使用罗德里格旋转公式 (Rodrigues' rotation formula )
     k is the unit vector of rotation axis;
     v is the rotated vector;
@@ -347,15 +360,3 @@ def Rotation_matrix(k, theta, radians = False, debug=False):
     R = np.identity(3)*math.cos(theta) + (1-math.cos(theta))*k_outer + \
         math.sin(theta)*np.matrix([[0, -kz, ky], [kz, 0, -kx], [-ky, kx, 0]])
     return np.array(R)
-
-
-def get_atoms_size(positions):
-    if hasattr(positions, 'positions'):
-        positions = positions.positions
-    assert isinstance(positions, (np.ndarray, list)), 'Please give Atoms, list or ndarray'
-    positions = np.array(positions).reshape((-1, 3))
-    size = [0.] * 3
-    for i in range(3):
-        size[i] = positions[:,i].max() - positions[:,i].min()
-    return tuple(size)
-
