@@ -6,7 +6,10 @@ Collection of atom manupulation tools
 ![PyPI](https://img.shields.io/pypi/v/atomtools.svg)
 
 
+## name
 
+* randString
+* get_atoms_name
 
 ## unit
 

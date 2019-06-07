@@ -129,7 +129,7 @@ def test_get_contact_matrix():
 
 def test_get_atoms_name():
     x = ase.build.molecule("CH4")
-    print(atomtools.geo.get_atoms_name(x))
+    print(atomtools.name.get_atoms_name(x))
 
 
 def test_get_atoms_size():

@@ -3,7 +3,6 @@ atomtools for geometry
 """
 import os
 import math
-import random
 import numpy as np
 from numpy.linalg import norm
 import itertools
@@ -33,16 +32,6 @@ def asin(result, arc = False, debug=False):
     factor = 1 if arc else 180.0/math.pi
     return math.asin(result) * factor
 
-def randString(num=10):
-    string = 'zyxwvutsrqponmlkjihgfedcba'+\
-             'zyxwvutsrqponmlkjihgfedcba'.upper()+\
-             '0123456789'
-    ran_str = ''.join(random.sample(string, num))
-    return ran_str
-
-def get_atoms_name(atoms, rand_length=10):
-    return '{0}_{1}'.format(atoms.get_chemical_formula(),
-                            randString(rand_length))
 
 def get_positions(positions):
     if hasattr(positions, 'positions'):
@@ -93,12 +82,12 @@ def cartesian_to_zmatrix(positions, zmatrix_dict = None,
     def get_zmat_data(zmatrix_dict, keywords, debug=False):
         return zmatrix_dict[keywords] if zmatrix_dict is not None \
             and keywords in zmatrix_dict else []
-    shown_length  = get_zmat_data(zmatrix_dict, 'shown_length')
-    shown_angle   = get_zmat_data(zmatrix_dict, 'shown_angle')
-    shown_dihedral= get_zmat_data(zmatrix_dict, 'shown_dihedral')
-    same_length   = get_zmat_data(zmatrix_dict, 'same_length')
-    same_angle    = get_zmat_data(zmatrix_dict, 'same_angle')
-    same_dihedral = get_zmat_data(zmatrix_dict, 'same_dihedral')
+    shown_length   = get_zmat_data(zmatrix_dict, 'shown_length')
+    shown_angle    = get_zmat_data(zmatrix_dict, 'shown_angle')
+    shown_dihedral = get_zmat_data(zmatrix_dict, 'shown_dihedral')
+    same_length    = get_zmat_data(zmatrix_dict, 'same_length')
+    same_angle     = get_zmat_data(zmatrix_dict, 'same_angle')
+    same_dihedral  = get_zmat_data(zmatrix_dict, 'same_dihedral')
     shown_length.sort()
     #shown_length = []
     #shown_angle = []
@@ -233,7 +222,7 @@ def input_standard_pos_transform(inp_pos, std_pos, t_vals,
 
     R_mat = None
     # return std_pos, inp_pos
-    for selection in combinations(range(natoms-1), 3):
+    for selection in itertools.combinations(range(natoms-1), 3):
         selection = list(selection)
         std_m = std_pos[selection]
         inp_m = inp_pos[selection]
@@ -248,7 +237,7 @@ def input_standard_pos_transform(inp_pos, std_pos, t_vals,
             break
     if R_mat is None:
         # dimision is less than 3
-        for selection in combinations(range(natoms-1), 2):
+        for selection in itertools.combinations(range(natoms-1), 2):
             std_v0 = std_pos[selection[0]]
             std_v1 = std_pos[selection[1]]
             std_v2 = np.cross(std_v0, std_v1)
