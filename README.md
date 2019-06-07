@@ -54,6 +54,18 @@ coordination transformation
 
 
 
+## file
+
+file module process all file related with file
+
+
+* get_file_content
+* get_filename
+* get_extension
+
+
+
+
 ## TODOS
 
 
