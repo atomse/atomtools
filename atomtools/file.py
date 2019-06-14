@@ -20,6 +20,7 @@ import chardet
 
 
 MAX_FILENAME_LENGTH = 50
+MAX_DETECT_LENGTH = 300000
 MAX_ACTIVE_TIME = 3600
 
 
@@ -36,7 +37,7 @@ def get_file_content(fileobj):
         if len(fileobj) < MAX_FILENAME_LENGTH and os.path.exists(fileobj): # a filename
             with open(fileobj, 'rb') as fd:
                 data = fd.read()
-            code = chardet.detect(data)['encoding']
+            code = chardet.detect(data[:MAX_DETECT_LENGTH])['encoding']
             return data.decode(code)
         else:
             return fileobj
