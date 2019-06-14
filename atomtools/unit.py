@@ -137,6 +137,28 @@ def trans_velocity(src, dest="ang/ps"):
 
 
 
+def trans_force(src, dest="eV/Ang"):
+    """
+    >>> abs(trans_velocity("hartree") - 27.211386245988653) < 1e-5
+    True
+    >>> abs(trans_velocity("kJ/mol", "eV") - 1/96.485) < 1e-5
+    True
+    >>> abs(trans_velocity("kcal/mol", "au") - 1/627.50) < 1e-5
+    True
+    """
+    SEG_LENGTH = 2
+    if src == ATOMIC_UNIT: 
+        src = get_atomic_unit(SEG_LENGTH)
+    else:
+        src = src.split("/")
+    assert len(src) == SEG_LENGTH
+        
+    if dest == ATOMIC_UNIT:
+        dest = [dest] * SEG_LENGTH
+    else:
+        dest = dest.split("/")
+    assert len(dest) == SEG_LENGTH
+    return trans_basic_unit(src[0], dest[0], "energy") / trans_basic_unit(src[1], dest[1], "length")
 
 
 def test():
