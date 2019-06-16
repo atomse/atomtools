@@ -120,7 +120,7 @@ def test_get_contact_matrix():
             'positions' : ase.build.molecule('H2CO')
         },
         # {
-        #     'positions' : atomse.io.read(BASEDIR+'/../test_cases/6.log')
+        #     'positions' : atomse.io.read(BASEDIR+'/6.log')
         # },
     ]
     for case in test_cases:
