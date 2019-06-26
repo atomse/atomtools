@@ -3,11 +3,13 @@ independent chemical symbols
 """
 
 
-__version__ = '1.5.4'
+__version__ = '1.5.5'
 def version():
     return __version__
 
-from . import name, unit, geo, file, string
+from . import name, unit, geo
+from . import file, string, system
+
 from .status import Status
 
 

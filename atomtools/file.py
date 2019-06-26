@@ -57,6 +57,8 @@ def get_filename(fileobj):
         raise ValueError('fileobj should be filename/filecontent/StringIO object')
 
 
+def get_file_basename(fileobj):
+    return os.path.splitext(get_filename(fileobj))[0]
 
 
 
@@ -84,4 +86,10 @@ def file_active(filename):
     return True
 
 
+
+def file_exist(filename):
+    filename = get_filename(filename)
+    if filename is None:
+        return False
+    return os.path.exists(filename)
 
