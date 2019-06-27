@@ -29,7 +29,7 @@ def get_file_content(fileobj):
     """
     get content of fileobj
     """
-    if isinstance(fileobj, StringIO):
+    if hasattr(fileobj, 'read'):
         fileobj.seek(0)
         return fileobj.read()
     elif isinstance(fileobj, str):
@@ -45,7 +45,7 @@ def get_file_content(fileobj):
 
 
 def get_filename(fileobj):
-    if isinstance(fileobj, StringIO):
+    if hasattr(fileobj, 'read'):
         return getattr(fileobj, 'name', None)
     elif isinstance(fileobj, str):
         if len(fileobj) < MAX_FILENAME_LENGTH:
