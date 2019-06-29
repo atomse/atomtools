@@ -129,7 +129,7 @@ def get_uncompressed_fileobj(filename):
         fileobj.name = os.path.basename(newfilename)
     os.remove(newfilename)
     try:
-        os.removedirs(TMP_DIR)
+        shutil.rmtree(TMP_DIR)
     except:
         pass
     return fileobj

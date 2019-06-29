@@ -1,0 +1,4 @@
+numpy==1.14.2
+chardet==3.0.4
+psutil==5.4.8
+chemdata==1.5.1
