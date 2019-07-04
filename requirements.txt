@@ -1,4 +1,4 @@
 chardet>=3.0.4
-psutil
-numpy
 chemdata>=1.5.2
+numpy
+psutil
