@@ -10,7 +10,7 @@ def version():
 from . import name, unit, geo
 from . import file, string, system
 from . import types
-from .filetype import filetype
+from .filetype import filetype, list_supported_formats
 from .status import Status
 
 

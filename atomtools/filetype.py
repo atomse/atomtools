@@ -13,19 +13,19 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DEFAULT_FILETYPE_REGEXP_CONF = 'default_extension.conf'
 REG_ANYSTRING = '[\s\S]*?'
 
-global format_regexp
-format_regexp = dict()
+global FORMATS_REGEXP
+FORMATS_REGEXP = dict()
 
 
 def update_config(path=None):
-    global format_regexp
+    global FORMATS_REGEXP
     path = path or os.path.join(BASE_DIR, DEFAULT_FILETYPE_REGEXP_CONF)
     if os.path.exists(path):
         conf = configparser.ConfigParser(delimiters=('='))
         conf.optionxform=str
         conf.read(path)
         for section in conf.sections():
-            format_regexp.update(conf._sections[section])
+            FORMATS_REGEXP.update(conf._sections[section])
 
 
 def filetype(fileobj=None, isfilename=False, debug=False):
@@ -42,7 +42,7 @@ def filetype(fileobj=None, isfilename=False, debug=False):
     content = atomtools.file.get_file_content(fileobj)
     if filename is None and content is None:
         return None
-    for fmt_regexp, fmt_filetype in format_regexp.items():
+    for fmt_regexp, fmt_filetype in FORMATS_REGEXP.items():
         name_regexp, content_regexp = (fmt_regexp.split('&&') + [None])[:2]
         if debug:
             print(name_regexp, content_regexp)
@@ -60,6 +60,12 @@ def filetype(fileobj=None, isfilename=False, debug=False):
             else:
                 return fmt_filetype
     return None
+
+
+def list_supported_formats():
+    return list(FORMATS_REGEXP.values())
+
+
 
 update_config()
 
