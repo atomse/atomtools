@@ -35,11 +35,14 @@ def filetype(fileobj=None, isfilename=False, debug=False):
     >>> filetype("1.gro")
     gromacs
     """
-    if isfilename:
-        filename = fileobj
+    filename = atomtools.file.get_absfilename(fileobj)
+    if atomtools.file.is_compressed_file(filename):
+        fileobj = atomtools.file.get_uncompressed_fileobj(filename)
+        filename = atomtools.file.get_uncompressed_filename(filename)
     else:
         filename = atomtools.file.get_filename(fileobj)
     content = atomtools.file.get_file_content(fileobj)
+    print(filename, content[:100])
     if filename is None and content is None:
         return None
     for fmt_regexp, fmt_filetype in FORMATS_REGEXP.items():

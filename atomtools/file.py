@@ -25,7 +25,11 @@ MAX_DETECT_LENGTH = 300000
 MAX_ACTIVE_TIME = 3600
 
 
+def get_file_extension(filename):
+    return os.path.splitext(get_absfilename(filename))[-1]
 
+def get_file_basename(filename):
+    return os.path.splitext(get_absfilename(filename))[0]
 
 def get_file_content(fileobj):
     """
@@ -112,13 +116,16 @@ compress_command = {
     '.lha' : 'lha -e',
 }
 
+
 def get_uncompressed_fileobj(filename):
-    if not os.path.exists(TMP_DIR):
-        os.makedirs(TMP_DIR)
-    extension = os.path.splitext(get_absfilename(filename))[-1]
+    filename = get_absfilename(filename)
+    extension = get_file_extension(filename)
     if not extension in compress_command:
         return filename
+
     cmd = compress_command[extension]
+    if not os.path.exists(TMP_DIR):
+        os.makedirs(TMP_DIR)
     tmpfilename = os.path.join(TMP_DIR, os.path.basename(filename))
     newfilename = os.path.splitext(tmpfilename)[0]
     shutil.copyfile(os.path.abspath(filename), tmpfilename)
@@ -133,4 +140,16 @@ def get_uncompressed_fileobj(filename):
     except:
         pass
     return fileobj
+
+
+def get_uncompressed_filename(filename):
+    return get_file_basename(filename)
+
+
+
+def is_compressed_file(filename):
+    if os.path.exists(filename) and get_file_extension(filename) in compress_command:
+        return True
+    return False
+
 

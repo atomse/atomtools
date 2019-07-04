@@ -2,6 +2,7 @@
 test atomtools
 """
 import os
+import glob
 import numpy as np
 import atomtools
 import ase.build
@@ -137,6 +138,12 @@ def test_get_atoms_size():
     print(atomtools.geo.get_atoms_size(x))
 
 
+def test_filetype():
+    testfiles = os.path.join(BASEDIR, '..', '..', 'gaseio', 'tests', 'Testcases', '*')
+    for fname in glob.glob(testfiles):
+        if os.path.isfile(fname):
+            print(os.path.realpath(fname))
+            print(atomtools.filetype(fname))
 
 def test():
     print(atomtools.__file__)
@@ -145,6 +152,7 @@ def test():
     test_get_contact_matrix()
     test_get_atoms_name()
     test_get_atoms_size()
+    test_filetype()
     # test_zmat()
 
 
