@@ -42,7 +42,6 @@ def filetype(fileobj=None, isfilename=False, debug=False):
     else:
         filename = atomtools.file.get_filename(fileobj)
     content = atomtools.file.get_file_content(fileobj)
-    print(filename, content[:100])
     if filename is None and content is None:
         return None
     for fmt_regexp, fmt_filetype in FORMATS_REGEXP.items():
