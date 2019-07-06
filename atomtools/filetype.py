@@ -10,22 +10,27 @@ import atomtools
 
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DEFAULT_FILETYPE_REGEXP_CONF = 'default_extension.conf'
-REG_ANYSTRING = '[\s\S]*?'
+DEFAULT_FILETYPE_REGEXP_CONF = 'default_filetype.conf'
+DEFAULT_FILETYPE_REGEXP_CONF = os.path.join(BASE_DIR, DEFAULT_FILETYPE_REGEXP_CONF)
+REG_ANYSTRING = r'[\s\S]*?'
+FILETYPE_SECTION_NAME = 'filetype'
+MULTIFRAME_NAME = 'multiframe'
 
-global FORMATS_REGEXP
-FORMATS_REGEXP = dict()
+
+
+global FORMATS_REGEXP, MULTIFRAME
+FORMATS_REGEXP, MULTIFRAME = dict(), list()
 
 
 def update_config(path=None):
-    global FORMATS_REGEXP
-    path = path or os.path.join(BASE_DIR, DEFAULT_FILETYPE_REGEXP_CONF)
+    global FORMATS_REGEXP, MULTIFRAME
+    path = path or DEFAULT_FILETYPE_REGEXP_CONF
     if os.path.exists(path):
         conf = configparser.ConfigParser(delimiters=('='))
         conf.optionxform=str
         conf.read(path)
-        for section in conf.sections():
-            FORMATS_REGEXP.update(conf._sections[section])
+        FORMATS_REGEXP.update(conf._sections[FILETYPE_SECTION_NAME])
+        MULTIFRAME += conf._sections[MULTIFRAME_NAME][MULTIFRAME_NAME].split()
 
 
 def filetype(fileobj=None, isfilename=False, debug=False):
@@ -67,6 +72,11 @@ def filetype(fileobj=None, isfilename=False, debug=False):
 def list_supported_formats():
     return list(FORMATS_REGEXP.values())
 
+
+def support_multiframe(ftype):
+    if ftype in MULTIFRAME:
+        return True
+    return False
 
 
 update_config()
