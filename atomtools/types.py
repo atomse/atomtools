@@ -90,7 +90,7 @@ class ExtDict(dict):
     """
 
     def __getitem__(self, name):
-        if name in self.keys():
+        if name in self.keys() or not isinstance(name, str):
             return dict.__getitem__(self, name)
         name = name.split('/')
         sdict = self
