@@ -33,7 +33,7 @@ def update_config(path=None):
         MULTIFRAME += conf._sections[MULTIFRAME_NAME][MULTIFRAME_NAME].split()
 
 
-def filetype(fileobj=None, isfilename=False, debug=False):
+def filetype(fileobj=None, debug=False):
     """
     >>> filetype("a.gjf")
     gaussian

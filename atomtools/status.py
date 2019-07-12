@@ -26,4 +26,4 @@ class Status:
     error = 'error'
     running = 'running'
     stopped = 'stopped'
-
+    unfinished = 'unfinished'
