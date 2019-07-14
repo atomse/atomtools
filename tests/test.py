@@ -22,12 +22,12 @@ def test_get_distance_matrix():
     test_cases = [
         {
             'positions' : np.array([
-               [ 0.  ,  0.  ,  0.  ],
-               [ 0.  ,  0.  , -1.11],
-               [ 0.92, -0.61, -0.11],
-               [-0.99, -0.49, -0.11],
-               [ 0.07,  1.1 , -0.11],
-               [ 0.  ,  0.  ,  1.76]])
+                [ 0.  ,  0.  ,  0.  ],
+                [ 0.  ,  0.  , -1.11],
+                [ 0.92, -0.61, -0.11],
+                [-0.99, -0.49, -0.11],
+                [ 0.07,  1.1 , -0.11],
+                [ 0.  ,  0.  ,  1.76]])
         },
         {
             'positions' : np.array([
@@ -145,16 +145,54 @@ def test_filetype():
             print(os.path.realpath(fname))
             print(atomtools.filetype(fname))
 
+
+
+def test_ExtDict():
+    test_cases = {
+        'positions' : np.zeros((10, 3)),
+        'numbers' : np.zeros((10,)),
+        'calc_arrays' : {
+            'command' : 'test',
+            'basis' : ['6-31G(d)'] * 10,
+            'ecp' : ['lanl2dz'] * 10,
+        }
+    }
+    x = atomtools.types.ExtDict(test_cases)
+    print('-'*25+'\n'+'test get/set')
+    print(x.get_positions())
+    x.set_positions(np.ones((10, 3)))
+    print(x.get_positions())
+
+    print('-'*25+'\n'+'test getitem/setitem')
+    print(x['calc_arrays/command'])
+    x['calc_arrays/command'] = 'test_again'
+    print(x['calc_arrays/command'])
+
+    print('-'*25+'\n'+'test get_all_keys()')
+    print(x.get_all_keys())
+
+    print('-'*25+'\n'+'test has_key()')
+    print('/calc_arrays/basis', x.has_key('/calc_arrays/basis'))
+    print('/xyz', x.has_key('/xyz'))
+
+
 def test():
     print(atomtools.__file__)
     print(atomtools.version())
+    print('-'*50+'\n'+'test_get_distance_matrix()')
     test_get_distance_matrix()
+    print('-'*50+'\n'+'test_get_contact_matrix()')
     test_get_contact_matrix()
+    print('-'*50+'\n'+'test_get_atoms_name()')
     test_get_atoms_name()
+    print('-'*50+'\n'+'test_get_atoms_size()')
     test_get_atoms_size()
-    test_filetype()
+    print('-'*50+'\n'+'# test_filetype()')
+    # test_filetype()
+    print('-'*50+'\n'+'# test_zmat()')
     # test_zmat()
-
+    print('-'*50+'\n'+'test_ExtDict()')
+    test_ExtDict()
 
 
 if __name__ == '__main__':

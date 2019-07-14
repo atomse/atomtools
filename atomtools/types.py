@@ -101,17 +101,46 @@ class ExtDict(dict):
             if not key in sdict.keys():
                 raise KeyError('{0} not exist'.format(key))
             sdict = sdict[key]
+        if isinstance(sdict, dict):
+            sdict = ExtDict(sdict)
         return sdict
+
+
+    def __setitem__(self, name, value):
+        if name in self.keys() or not isinstance(name, str):
+            return dict.__setitem__(self, name, value)
+        name = name.split('/')
+        sdict = self
+        while name[:-1]:
+            key = name.pop(0)
+            if not key:
+                continue
+            if not key in sdict.keys():
+                sdict[key] = {}
+            sdict = sdict[key]
+        key = name.pop(0)
+        sdict[key] = value
+
 
     def __getattr__(self, name):
         if name.startswith('__'):
             return dict.__getattr__(name)
-        if name.startswith('get_'):
-            _name = name[len('get_'):]
-            return lambda : self['calc_arrays'].get(_name, None) \
-                            if self.get(_name, None) is None and dict.get(self, 'calc_arrays', None) \
-                            else self.get(_name, None)
+        elif name.startswith('get_'):
+            name = name[len('get_'):]
+            return lambda : self['calc_arrays'].get(name, None) \
+                            if self.get(name, None) is None and dict.get(self, 'calc_arrays', None) \
+                            else self.get(name, None)
+        elif name.startswith('set_'):
+            name = name[len('set_'):]
+            print(name)
+            def setter(value):
+                self[name] = value
+            return setter
         return dict.__getitem__(self, name)
+
+    def __setattr__(self, name, value):
+        self[name] = value
+
 
     def has_key(self, name):
         try:
