@@ -145,6 +145,11 @@ def test_filetype():
             print(os.path.realpath(fname))
             print(atomtools.filetype(fname))
 
+    testfiles = os.path.join(BASEDIR, '..', '..', 'gaseio', 'tests', 'Testcases', 'future', '*')
+    for fname in glob.glob(testfiles):
+        if os.path.isfile(fname):
+            print(os.path.realpath(fname))
+            print(atomtools.filetype(fname))
 
 
 def test_ExtDict():
@@ -188,7 +193,7 @@ def test():
     print('-'*50+'\n'+'test_get_atoms_size()')
     test_get_atoms_size()
     print('-'*50+'\n'+'# test_filetype()')
-    # test_filetype()
+    test_filetype()
     print('-'*50+'\n'+'# test_zmat()')
     # test_zmat()
     print('-'*50+'\n'+'test_ExtDict()')

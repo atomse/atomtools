@@ -56,7 +56,7 @@ def filetype(fileobj=None, debug=False):
         if filename and re.match(re.compile(name_regexp.strip()), filename) or filename is None:
             if content and content_regexp:
                 if not content_regexp.startswith('^'):
-                    content_regexp = REG_ANYSTRING + content_regexp.strip() 
+                    content_regexp = REG_ANYSTRING + content_regexp.strip()
                 if not content_regexp.endswith('$'):
                     content_regexp = content_regexp.strip() + REG_ANYSTRING
                 if debug:
@@ -78,8 +78,4 @@ def support_multiframe(ftype):
         return True
     return False
 
-
 update_config()
-
-
-
