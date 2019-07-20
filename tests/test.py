@@ -139,13 +139,13 @@ def test_get_atoms_size():
 
 
 def test_filetype():
-    testfiles = os.path.join(BASEDIR, '..', '..', 'gaseio', 'tests', 'Testcases', '*')
+    testfiles = os.path.join(BASEDIR, 'chem_file_samples', '*')
     for fname in glob.glob(testfiles):
         if os.path.isfile(fname):
             print(os.path.realpath(fname))
             print(atomtools.filetype(fname))
 
-    testfiles = os.path.join(BASEDIR, '..', '..', 'gaseio', 'tests', 'Testcases', 'future', '*')
+    testfiles = os.path.join(BASEDIR, 'chem_file_samples', 'future', '*')
     for fname in glob.glob(testfiles):
         if os.path.isfile(fname):
             print(os.path.realpath(fname))
