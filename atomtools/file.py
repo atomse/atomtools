@@ -31,7 +31,7 @@ def get_file_extension(filename):
 def get_file_basename(filename):
     return os.path.splitext(get_absfilename(filename))[0]
 
-def get_file_content(fileobj):
+def get_file_content(fileobj, size=-1):
     """
     get content of fileobj
     """
@@ -41,7 +41,7 @@ def get_file_content(fileobj):
     elif isinstance(fileobj, str):
         if len(fileobj) < MAX_FILENAME_LENGTH and os.path.exists(fileobj): # a filename
             with open(fileobj, 'rb') as fd:
-                data = fd.read()
+                data = fd.read(size)
             code = chardet.detect(data[:MAX_DETECT_LENGTH])['encoding']
             return data.decode(code).replace('\r', '')
         else:

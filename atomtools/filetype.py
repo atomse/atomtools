@@ -21,6 +21,9 @@ MULTIFRAME_NAME = 'multiframe'
 global FORMATS_REGEXP, MULTIFRAME
 FORMATS_REGEXP, MULTIFRAME = dict(), list()
 
+PARTIAL_LENGTH = 100000
+
+
 
 def update_config(path=None):
     global FORMATS_REGEXP, MULTIFRAME
@@ -46,7 +49,7 @@ def filetype(fileobj=None, debug=False):
         filename = atomtools.file.get_uncompressed_filename(filename)
     else:
         filename = atomtools.file.get_filename(fileobj)
-    content = atomtools.file.get_file_content(fileobj)
+    content = atomtools.file.get_file_content(fileobj, size=PARTIAL_LENGTH)
     if filename is None and content is None:
         return None
     for fmt_regexp, fmt_filetype in FORMATS_REGEXP.items():
