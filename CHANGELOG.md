@@ -2,6 +2,10 @@
 
 
 
+## 1.8.0
+
+* refactor atomtools to a collection of submodules, you need to import these modules independently
+to speed up the importing. 
 
 
 
