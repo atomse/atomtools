@@ -6,7 +6,7 @@ analyze chemical input/output filetype
 import os
 import re
 import configparser
-import atomtools
+from . import fileutil
 
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -30,7 +30,7 @@ def update_config(path=None):
     path = path or DEFAULT_FILETYPE_REGEXP_CONF
     if os.path.exists(path):
         conf = configparser.ConfigParser(delimiters=('='))
-        conf.optionxform=str
+        conf.optionxform = str
         conf.read(path)
         FORMATS_REGEXP.update(conf._sections[FILETYPE_SECTION_NAME])
         MULTIFRAME += conf._sections[MULTIFRAME_NAME][MULTIFRAME_NAME].split()
@@ -43,13 +43,13 @@ def filetype(fileobj=None, debug=False):
     >>> filetype("1.gro")
     gromacs
     """
-    filename = atomtools.file.get_absfilename(fileobj)
-    if atomtools.file.is_compressed_file(filename):
-        fileobj = atomtools.file.get_uncompressed_fileobj(filename)
-        filename = atomtools.file.get_uncompressed_filename(filename)
+    filename = fileutil.get_absfilename(fileobj)
+    if fileutil.is_compressed_file(filename):
+        fileobj = fileutil.get_uncompressed_fileobj(filename)
+        filename = fileutil.get_uncompressed_filename(filename)
     else:
-        filename = atomtools.file.get_filename(fileobj)
-    content = atomtools.file.get_file_content(fileobj, size=PARTIAL_LENGTH)
+        filename = fileutil.get_filename(fileobj)
+    content = fileutil.get_file_content(fileobj, size=PARTIAL_LENGTH)
     if filename is None and content is None:
         return None
     for fmt_regexp, fmt_filetype in FORMATS_REGEXP.items():

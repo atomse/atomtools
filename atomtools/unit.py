@@ -50,9 +50,23 @@ UNITS = {
         "ps" : 1e-12,
         "fs" : 1e-15,
         ATOMIC_UNIT : 2.4188843265857*1e-17,
-    }
+    },
+
+    "PRESSURE_UNITS" : {
+        "pa" : 1,
+        "mpa" : 1000000,
+        "kpa" : 1000,
+        "hpa" : 100,
+        "atm" : 101325,
+        "mmhg" : 133.3223684,
+        "inhg" : 3386.3881579,
+        "bar" : 100000,
+        "mbar" : 100,
+        "psf" : 47.8802569,
+    },
 
 }
+
 
 
 def get_atomic_unit(length):
@@ -75,6 +89,46 @@ def trans_basic_unit(src, dest, unit):
     assert src in unit_units and dest in unit_units,\
         "src {1} and dest {2} {0} unit should be valid {0} unit".format(unit, src, dest)
     return float(unit_units[src]) / float(unit_units[dest])
+
+
+def trans_temperature(number, src=None, dest='K'):
+    """
+    transfer temperature from one unit to another
+    Input:
+        number: int/float/string, like 100/100.4/100.23C/100.23 Celsius
+        src: default None, read from number, but could be given
+        dest: default K
+    Output:
+        temperature number with dest as unit
+    """
+    import re
+    VALID_TEMPERATURE_UNITS = ['k', 'c', 'f']
+    if isinstance(number, str):
+        res = re.match(r'^(\d+\.?\d*)\s*([A-Za-z]+)$', number)
+        if re.match(r'^\d+\.*\d*$', number):
+            number = float(number)
+        elif res:
+            number, src = float(res[1]), res[2]
+        else:
+            raise ValueError(f'given number {number} is not a int/float or number with unit')
+    if not src:
+        raise ValueError(f'src unit not given')
+    src = src.lower()[0]
+    dest = dest.lower()[0]
+    assert src in VALID_TEMPERATURE_UNITS and dest in VALID_TEMPERATURE_UNITS, f'src:{src}, dest:{dest}'
+    assert isinstance(number, (int, float)), 'number should be a int/float'
+    if src == dest:
+        return number
+    if src =='k':
+        number -= 298.15
+    elif src == 'f':
+        number = (number - 32) * 5/9
+
+    if dest == 'k':
+        number += 298.15
+    elif dest == 'f':
+        number = (number + 32) * 9/5
+    return number
 
 
 def trans_length(src, dest="Ang"):
@@ -147,7 +201,6 @@ def trans_velocity(src, dest="ang/ps"):
     return trans_basic_unit(src[0], dest[0], "length") / trans_basic_unit(src[1], dest[1], "time")
 
 
-
 def trans_force(src, dest="eV/Ang"):
     """
     >>> abs(trans_velocity("hartree") - 27.211386245988653) < 1e-5
@@ -172,6 +225,11 @@ def trans_force(src, dest="eV/Ang"):
     return trans_basic_unit(src[0], dest[0], "energy") / trans_basic_unit(src[1], dest[1], "length")
 
 
+def trans_pressure(src, dest="bar"):
+    """
+    >>>
+    """
+    return trans_basic_unit(src, dest, "pressure")
 def test():
     cases = [
         {
