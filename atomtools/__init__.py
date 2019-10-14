@@ -3,7 +3,7 @@ independent chemical symbols
 """
 
 
-__version__ = '1.8.2'
+__version__ = '1.8.3'
 def version():
     return __version__
 
