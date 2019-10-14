@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 1.8.2
+
+* fix OUTCAR filetype. 
+
 
 
 ## 1.8.0
