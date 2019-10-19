@@ -7,12 +7,14 @@ Extended type:
 from collections import Iterable, Counter, OrderedDict
 
 
-
 NO_DEFAULT = '__THIS_MEANS_NO_DEFAULT__'
+
+
 class ExtList(list):
     """
     Extended list
     """
+
     def __mul__(self, a):
         assert isinstance(a, Iterable),\
             'multiplier should be Iterable, instead of {1}'.format(a, type(a))
@@ -30,7 +32,7 @@ class ExtList(list):
     def contract_items(self, outtype=None):
         _contract_items = []
         for i, item in enumerate(self):
-            if i==0 or item != self[i-1]:
+            if i == 0 or item != self[i-1]:
                 _contract_items.append(item)
         if outtype == 'string':
             _contract_items = ' '.join(str(_) for _ in _contract_items)
@@ -40,7 +42,7 @@ class ExtList(list):
         _contract_numbers = []
         num = 0
         for i, item in enumerate(self):
-            if i==0 or item == self[i-1]:
+            if i == 0 or item == self[i-1]:
                 num += 1
             else:
                 _contract_numbers.append(num)
@@ -105,7 +107,6 @@ class ExtDict(dict):
             sdict = ExtDict(sdict)
         return sdict
 
-
     def __setitem__(self, name, value):
         if name in self.keys() or not isinstance(name, str):
             return dict.__setitem__(self, name, value)
@@ -121,18 +122,18 @@ class ExtDict(dict):
         key = name.pop(0)
         sdict[key] = value
 
-
     def __getattr__(self, name):
         if name.startswith('__'):
             return dict.__getattr__(name)
         elif name.startswith('get_'):
             name = name[len('get_'):]
-            return lambda : self['calc_arrays'].get(name, None) \
-                            if self.get(name, None) is None and dict.get(self, 'calc_arrays', None) \
-                            else self.get(name, None)
+            return lambda: self['calc_arrays'].get(name, None) \
+                if self.get(name, None) is None and dict.get(self, 'calc_arrays', None) \
+                else self.get(name, None)
         elif name.startswith('set_'):
             name = name[len('set_'):]
             print(name)
+
             def setter(value):
                 self[name] = value
             return setter
@@ -140,7 +141,6 @@ class ExtDict(dict):
 
     def __setattr__(self, name, value):
         self[name] = value
-
 
     def has_key(self, name):
         try:
@@ -162,12 +162,10 @@ class ExtDict(dict):
         return result
 
     # def get(self, key, default=NO_DEFAULT):
-    #     if key == 'defines' : 
+    #     if key == 'defines' :
     #         import pdb; pdb.set_trace()
     #     if self[key] is not None:
     #         return self[key]
     #     elif default != NO_DEFAULT:
     #         return default
     #     raise KeyError(key, 'not found')
-        
-
