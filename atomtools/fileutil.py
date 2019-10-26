@@ -105,7 +105,6 @@ def file_exist(filename):
     return os.path.exists(filename)
 
 
-TMP_DIR = '/tmp/atomtools_{0}'.format(randString())
 compress_command = {
     '.xz': 'xz -d -f',
     '.zip': 'unzip',
@@ -119,15 +118,22 @@ compress_command = {
 
 
 def get_uncompressed_fileobj(filename):
+    import gzip
+    tmpdir = '/tmp/atomtools_{0}'.format(randString())
     filename = get_absfilename(filename)
     extension = get_file_extension(filename)
     if not extension in compress_command:
         return filename
 
+    # if extension == '.gz':
+    #     import pdb; pdb.set_trace()
+    #     res = gzip.GzipFile(filename, 'rb')
+    #     res = StringIO(res.read())
+
     cmd = compress_command[extension]
-    if not os.path.exists(TMP_DIR):
-        os.makedirs(TMP_DIR)
-    tmpfilename = os.path.join(TMP_DIR, os.path.basename(filename))
+    if not os.path.exists(tmpdir):
+        os.makedirs(tmpdir)
+    tmpfilename = os.path.join(tmpdir, os.path.basename(filename))
     newfilename = os.path.splitext(tmpfilename)[0]
     shutil.copyfile(os.path.abspath(filename), tmpfilename)
     cmd += ' ' + tmpfilename + \
@@ -138,7 +144,7 @@ def get_uncompressed_fileobj(filename):
         fileobj.name = os.path.basename(newfilename)
     os.remove(newfilename)
     try:
-        shutil.rmtree(TMP_DIR)
+        shutil.rmtree(tmpdir)
     except:
         pass
     return fileobj

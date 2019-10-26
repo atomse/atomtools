@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 1.8.6
+
+* fix multiprocessing tmpdir in fileutil conflict
+
+
+
 ## 1.8.2
 
 * fix OUTCAR filetype. 
