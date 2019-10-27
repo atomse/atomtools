@@ -46,7 +46,7 @@ def get_atoms_arrays(obj):
     """
     obj_type = f"{obj.__class__.__module__}.{obj.__class__.__name__}"
     if isinstance(obj, dict):
-        pass
+        arrays = obj
     elif isinstance(obj, (list, np.ndarray)):
         arrays = [__get_atoms_arrays(x) for x in obj]
     elif obj_type == 'ase.neb.NEB':
