@@ -21,6 +21,10 @@ def __get_atoms_arrays(obj):
     if obj_type in ['ase.atoms.Atoms', 'gase.aseshell.AtomsShell']:
         arrays = obj.arrays.copy()
         if obj_type == 'ase.atoms.Atoms':
+            # set cell & pbc
+            arrays['cell'] = obj.cell.array.copy()
+            arrays['pbc'] = obj.pbc.copy()
+            arrays['cell_disp'] = obj.get_celldisp()
             calc = obj.calc
             if calc is not None:
                 if calc.name:
