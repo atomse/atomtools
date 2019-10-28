@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 1.8.7
+
+* fix `method.get_atoms_array()` bug
+
+
 ## 1.8.6
 
 * fix multiprocessing tmpdir in fileutil conflict
