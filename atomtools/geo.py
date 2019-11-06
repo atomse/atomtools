@@ -3,9 +3,11 @@ atomtools for geometry
 """
 import os
 import math
+import itertools
 import numpy as np
 from numpy.linalg import norm
-import itertools
+
+import modlog
 import chemdata
 
 
@@ -13,22 +15,25 @@ BASEDIR = os.path.dirname(os.path.abspath(__file__))
 EXTREME_SMALL = 1e-5
 
 
-def cos(theta, arc=False, debug=False):
+logger = modlog.getLogger(__name__)
+
+
+def cos(theta, arc=False):
     factor = 1 if arc else math.pi/180.0
     return math.cos(theta * factor)
 
 
-def sin(theta, arc=False, debug=False):
+def sin(theta, arc=False):
     factor = 1 if arc else math.pi/180.0
     return math.sin(theta * factor)
 
 
-def acos(result, arc=False, debug=False):
+def acos(result, arc=False):
     factor = 1 if arc else 180.0/math.pi
     return math.acos(result) * factor
 
 
-def asin(result, arc=False, debug=False):
+def asin(result, arc=False):
     factor = 1 if arc else 180.0/math.pi
     return math.asin(result) * factor
 
@@ -58,7 +63,7 @@ def normed(v):
     return v/norm(v)
 
 
-def vector_angle(a, b, debug=False):
+def vector_angle(a, b):
     return acos(np.dot(a, b)/(norm(a)*norm(b)))
 
 
@@ -84,8 +89,8 @@ def get_dihedral(positions, i, j, k, l):
 
 
 def cartesian_to_zmatrix(positions, zmatrix_dict=None,
-                         initial_num=0, indices=None, debug=False):
-    def get_zmat_data(zmatrix_dict, keywords, debug=False):
+                         initial_num=0, indices=None):
+    def get_zmat_data(zmatrix_dict, keywords):
         return zmatrix_dict[keywords] if zmatrix_dict is not None \
             and keywords in zmatrix_dict else []
     shown_length = get_zmat_data(zmatrix_dict, 'shown_length')
@@ -110,12 +115,11 @@ def cartesian_to_zmatrix(positions, zmatrix_dict=None,
         if ai == 0:
             continue
         elif ai == 1:
-            zmatrix[ai][0] = [0, get_distance(0, 1)]
+            zmatrix[ai][0] = [0, get_distance(positions, 0, 1)]
             continue
         for a0, a1 in shown_length:
             a0, a1 = indices[a0], indices[a1]
-            if debug:
-                print(a0, a1)
+            logger.debug(f"{a0}, {a1}")
             if ai == a1:
                 alpha = 'R_'+str(a0+initial_num)+'_'+str(a1+initial_num)
                 write_variable = True
@@ -126,15 +130,14 @@ def cartesian_to_zmatrix(positions, zmatrix_dict=None,
                         # print("UES")
                         if same_bond_variables[index] == '':
                             same_bond_variables[index] = alpha
-                            if debug:
-                                print(index, same_bond_variables)
+                            logger.debug(f"{index}, {same_bond_variables}")
                         else:
                             alpha = same_bond_variables[index]
                             write_variable = False
                         break
                 zmatrix[ai][0] = [a0, alpha]
                 if write_variable:
-                    variables[alpha] = [(a0, a1), get_distance(a0, a1)]
+                    variables[alpha] = [(a0, a1), get_distance(positions, a0, a1)]
                 break
 
         a0 = -1
@@ -143,9 +146,8 @@ def cartesian_to_zmatrix(positions, zmatrix_dict=None,
         a0 = zmatrix[ai][0][0]
         if a0 == -1:
             a0 = 0
-            dist = get_distance(ai, a0)
-            if debug:
-                print('dist:', ai, a0, dist)
+            dist = get_distance(positions, ai, a0)
+            logger.debug(f'dist:, {ai}, {a0}, {dist}')
             zmatrix[ai][0] = [a0, dist]
 
         a1 = zmatrix[ai][1][0]
@@ -155,9 +157,8 @@ def cartesian_to_zmatrix(positions, zmatrix_dict=None,
                     break
             if a1 == -1:
                 raise ValueError('a1 is still -1')
-            angle = get_angle(ai, a0, a1)
-            if debug:
-                print('angle:', ai, a0, a1, angle)
+            angle = get_angle(positions, ai, a0, a1)
+            logger.debug(f'angle:, {ai}, {a0}, {a1}, {angle}')
             zmatrix[ai][1] = [a1, angle]
         a2 = zmatrix[ai][2][0]
         if ai >= 3 and a2 == -1:
@@ -166,25 +167,22 @@ def cartesian_to_zmatrix(positions, zmatrix_dict=None,
                     break
             if a2 == -1:
                 raise ValueError('a2 is still -1')
-            dihedral = get_dihedral(ai, a0, a1, a2)
-            if debug:
-                print('dihedral:', dihedral)
+            dihedral = get_dihedral(positions, ai, a0, a1, a2)
+            logger.debug(f'dihedral:, {dihedral}')
             zmatrix[ai][2] = [a2, dihedral]
     if initial_num != 0:
         for zmat in zmatrix:
             for zmat_x in zmat:
                 if zmat_x[0] != -1:
                     zmat_x[0] += initial_num
-    if debug:
-        print(zmatrix, variables, indices)
+    logger.debug(f"{zmatrix}, {variables}, {indices}")
     return zmatrix, variables, indices
 
 
-def cartesian_to_spherical(pos_o, pos_s, debug=False):
+def cartesian_to_spherical(pos_o, pos_s):
     pos_o = np.array(pos_o)
     pos_s = np.array(pos_s)
-    if debug:
-        print('cartesian to spherical:', pos_o, pos_s)
+    logger.debug(f'cartesian to spherical:, {pos_o}, {pos_s}')
     v_os = pos_s - pos_o
     if norm(v_os) < 0.01:
         return (0, 0, 0)
@@ -192,8 +190,7 @@ def cartesian_to_spherical(pos_o, pos_s, debug=False):
     length = np.linalg.norm(v_os)
     theta = acos(z/length)
     xy_length = math.sqrt(x*x+y*y)
-    if debug:
-        print('xy_length', theta, xy_length)
+    logger.debug(f'xy_length, {theta}, {xy_length}')
     if xy_length < 0.05:
         phi_x = 0.0
         phi_y = 0.0
@@ -207,11 +204,10 @@ def cartesian_to_spherical(pos_o, pos_s, debug=False):
     return (length, theta, phi)
 
 
-def spherical_to_cartesian(pos_o, length, space_angle, space_angle0=(0, 0), debug=False):
+def spherical_to_cartesian(pos_o, length, space_angle, space_angle0=(0, 0)):
     theta, phi = space_angle
     theta0, phi0 = space_angle0
-    if debug:
-        print('sperical to cartesian:', theta, phi)
+    print(f'sperical to cartesian:, {theta}, {phi}')
     pos_site = np.array(pos_o) + length * \
         np.array([sin(theta+theta0) * cos(phi+phi0),
                   sin(theta+theta0) * sin(phi+phi0),
@@ -219,7 +215,7 @@ def spherical_to_cartesian(pos_o, length, space_angle, space_angle0=(0, 0), debu
     return pos_site
 
 
-def rotate_site_angle(site_angle, theta, phi, debug=False):
+def rotate_site_angle(site_angle, theta, phi):
     for site_angle_i in site_angle:
         theta_i, phi_i = site_angle_i
         site_angle_i = [theta_i+theta, phi_i+phi]
@@ -227,7 +223,7 @@ def rotate_site_angle(site_angle, theta, phi, debug=False):
 
 
 def input_standard_pos_transform(inp_pos, std_pos, t_vals,
-                                 std_to_inp=True, is_coord=False, debug=False):
+                                 std_to_inp=True, is_coord=False):
     t_vals = np.array(t_vals).copy()
     std_O = np.array(std_pos)[-1].copy()
     inp_O = np.array(inp_pos)[-1].copy()
@@ -247,10 +243,9 @@ def input_standard_pos_transform(inp_pos, std_pos, t_vals,
             # std_m * R_mat = inp_m
             # R_mat = std_m^-1 * inp_m
             R_mat = np.dot(np.linalg.inv(std_m), inp_m)
-            if debug:
-                print('selections:', selection)
-                # print(std_m, np.linalg.det(std_m))
-                # print(inp_m, np.linalg.det(inp_m))
+            logger.debug(f'selections:, {selection}')
+            logger.debug(f'{std_m}, {np.linalg.det(std_m)}')
+            logger.debug(f'{inp_m}, {np.linalg.det(inp_m)}')
             break
     if R_mat is None:
         # dimision is less than 3
@@ -265,8 +260,7 @@ def input_standard_pos_transform(inp_pos, std_pos, t_vals,
             inp_m = np.array([inp_v0, inp_v1, inp_v2])
             if np.linalg.det(std_m) > 0.01:
                 R_mat = np.dot(np.linalg.inv(std_m), inp_m)
-                if debug:
-                    print('selections:', selection)
+                logger.debug(f'selections:, {selection}')
                 break
     if R_mat is None:
         # 2 atoms
@@ -274,17 +268,16 @@ def input_standard_pos_transform(inp_pos, std_pos, t_vals,
         inp_v = inp_pos[0]
         R = np.cross(std_v, inp_v)
         R = normed(R)
-        if debug:
-            print('stdv, inpv:', std_v, inp_v, '\nR:', R)
+        logger.debug(f'stdv, inpv:, {std_v}, {inp_v}, \nR:, {R}')
         if std_to_inp:
             return np.cross(R, t_vals-std_O)+inp_O
         else:
             return np.cross(t_vals-inp_O, R)+std_O
     else:
         # testification
-        if debug:
-            assert((np.dot(std_pos, R_mat)-inp_pos < 0.001).all())
-            print('test complete')
+        # if debug:
+        #     assert((np.dot(std_pos, R_mat)-inp_pos < 0.001).all())
+        #     logger.debug('test complete')
         if std_to_inp:
             return np.dot(t_vals - std_O, R_mat) + inp_O
         else:
@@ -298,7 +291,7 @@ def get_X_Y_dist_matrix(X, Y=None):
         + np.sum(np.square(Y), axis=1).reshape((1, -1)) - 2 * np.dot(X, Y.T)
 
 
-def get_distance_matrix(positions, debug=False):
+def get_distance_matrix(positions):
     cell = None
     if hasattr(positions, 'cell'):
         cell = positions.cell
@@ -315,7 +308,7 @@ def get_distance_matrix(positions, debug=False):
     return dist_matrix
 
 
-def dist_change_matrix(positions, dpos, debug=False):
+def dist_change_matrix(positions, dpos):
     # dpos = dpos.copy()
     positions = positions.copy()
     dists0 = get_distance_matrix(positions)
@@ -324,7 +317,7 @@ def dist_change_matrix(positions, dpos, debug=False):
 
 
 def get_contact_matrix(positions, numbers=None, bonding_distance_matrix=None,
-                       n=6, m=12, debug=False):
+                       n=6, m=12):
     if bonding_distance_matrix is None:
         if hasattr(positions, 'numbers'):
             numbers = positions.numbers
@@ -336,22 +329,21 @@ def get_contact_matrix(positions, numbers=None, bonding_distance_matrix=None,
         # bonding_distance_matrix *= 0
     # print('positions', positions)
     positions = get_positions(positions)
-    distance_matrix = get_distance_matrix(positions, debug)
+    distance_matrix = get_distance_matrix(positions)
     rx = distance_matrix / bonding_distance_matrix
     contact_matrix = (1 - np.power(rx, n)) / (1 - np.power(rx, m))
-    if debug:
-        print('distance_matrix:', distance_matrix, '\n',
-              'bonding_distance_matrix:', bonding_distance_matrix)
+    logger.debug(f'distance_matrix:, {distance_matrix}\n\
+                   bonding_distance_matrix:, {bonding_distance_matrix}')
     return contact_matrix
 
 
-def freq_dist_change_matrix(XX, positions, debug=False):
+def freq_dist_change_matrix(XX, positions):
     XX = XX.copy()
     dists0 = get_distance_matrix(positions)
     return np.array([get_distance_matrix(x) for x in XX+positions]) - dists0
 
 
-def get_rotation_matrix(k, theta, radians=False, debug=False):
+def get_rotation_matrix(k, theta, radians=False):
     """  使用罗德里格旋转公式 (Rodrigues' rotation formula )
     k is the unit vector of rotation axis;
     v is the rotated vector;
@@ -472,6 +464,6 @@ def cell_abc_alpha_beta_gamma_to_cartesion(params):
         return cellpar_to_cell(params)
     elif np.array(params).shape == (3, 3):
         a, b, c, alpha, beta, gamma = params
-        return a, b, c, alpha, beta. gamma
+        return a, b, c, alpha, beta, gamma
     else:
         raise ValueError("params type error")

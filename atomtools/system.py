@@ -1,14 +1,28 @@
-import os
+"""
+get max cores and memory for linux
+
+"""
 import sys
 import psutil
-import random
-from importlib import import_module
 
 
 if sys.platform in ['linux', 'darwin']:
     devnull = open('/dev/null', 'w')
 elif sys.platform in ['windows']:
     devnull = open('NUL', 'w')
+
+
+def kmg_unit(unit):
+    unit = unit.upper()
+    ALL_UNITS = ['TB', "GB", "MB", "KB"]
+    assert unit in ALL_UNITS
+    num = 1
+    flag = False
+    for this_unit in ALL_UNITS:
+        if this_unit == unit or flag:
+            num *= 1024
+            flag = True
+    return num
 
 
 def get_maxcore():

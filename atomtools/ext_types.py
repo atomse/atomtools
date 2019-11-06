@@ -4,7 +4,7 @@ Extended type:
 
     ExtDict, rewrite getitem so that '/a/b/c/d' -> ['a']['b']['c']['d']
 """
-from collections import Iterable, Counter, OrderedDict
+from collections import Iterable, OrderedDict
 
 
 NO_DEFAULT = '__THIS_MEANS_NO_DEFAULT__'
@@ -124,7 +124,7 @@ class ExtDict(dict):
 
     def __getattr__(self, name):
         if name.startswith('__'):
-            return dict.__getattr__(name)
+            return dict.__getattribute__(self, name)
         elif name.startswith('get_'):
             name = name[len('get_'):]
             return lambda: self['calc_arrays'].get(name, None) \
