@@ -51,9 +51,13 @@ def filetype(fileobj=None):
         filename = fileutil.get_uncompressed_filename(filename)
     else:
         filename = fileutil.get_filename(fileobj)
-    content = fileutil.get_file_content(fileobj, size=PARTIAL_LENGTH)
+    try:
+        content = fileutil.get_file_content(fileobj, size=PARTIAL_LENGTH)
+    except TypeError:
+        content = None
     if filename is None and content is None:
         return None
+    # logger.debug("filename: %s, content: %s" % (filename, content))
     for fmt_regexp, fmt_filetype in FORMATS_REGEXP.items():
         name_regexp, content_regexp = (fmt_regexp.split('&&') + [None])[:2]
         logger.debug(f"{name_regexp}, {content_regexp}")

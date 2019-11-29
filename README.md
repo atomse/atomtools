@@ -65,6 +65,15 @@ file module process all file related with file
 
 
 
+## filetype
+
+* gaussian/gaussian-out/gaussian-fchk/gaussian-chk
+* adf/adf-out
+* POSCAR/vasprun.xml/CONTCAR/INCAR/POTCAR
+* json
+* sdf
+
+
 
 ## TODOS
 
