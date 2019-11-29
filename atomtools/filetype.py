@@ -57,7 +57,7 @@ def filetype(fileobj=None):
         content = None
     if filename is None and content is None:
         return None
-    # logger.debug("filename: %s, content: %s" % (filename, content))
+    logger.debug("filename: %s, content: %s" % (filename, content))
     for fmt_regexp, fmt_filetype in FORMATS_REGEXP.items():
         name_regexp, content_regexp = (fmt_regexp.split('&&') + [None])[:2]
         logger.debug(f"{name_regexp}, {content_regexp}")
@@ -67,7 +67,7 @@ def filetype(fileobj=None):
                     content_regexp = REG_ANYSTRING + content_regexp.strip()
                 if not content_regexp.endswith('$'):
                     content_regexp = content_regexp.strip() + REG_ANYSTRING
-                logger.debug(content_regexp)
+                logger.debug("content_regexp: " + content_regexp)
                 if re.match(re.compile(content_regexp.strip()), content):
                     return fmt_filetype
             else:
@@ -94,4 +94,5 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('filename', type=str)
     args = parser.parse_args()
+    logger = modlog.getLogger("Atomtools: Filetype", 'normal', 'FILETYPE_LOGLEVEL')
     print(filetype(args.filename))
