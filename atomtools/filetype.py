@@ -5,6 +5,7 @@ analyze chemical input/output filetype
 
 import os
 import re
+import argparse
 import configparser
 import modlog
 from . import fileutil
@@ -82,3 +83,11 @@ def support_multiframe(ftype):
 
 
 update_config()
+
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('filename', type=str)
+    args = parser.parse_args()
+    print(filetype(args.filename))
