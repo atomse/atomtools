@@ -13,7 +13,7 @@ import atomtools
 import atomtools.fileutil
 import atomtools.geo
 import atomtools.name
-import atomtools.types
+import atomtools.ext_types
 import atomtools.filetype
 
 
@@ -63,7 +63,6 @@ def test_get_distance_matrix():
     ]
 
     for case in test_cases:
-        case.update({'debug': True})
         print(atomtools.geo.get_distance_matrix(**case))
 
     print(atomtools.geo.dist_change_matrix(test_cases[0]['positions'], 1))
@@ -115,7 +114,7 @@ def test_zmat():
     ]
 
     for case in test_cases:
-        case.update({'debug': True, 'std_vec': case['inp_pos'][0:2]})
+        case.update({'std_vec': case['inp_pos'][0:2]})
         print(atomtools.geo.input_standard_pos_transform(**case))
 
 
@@ -139,7 +138,6 @@ def test_get_contact_matrix():
         # },
     ]
     for case in test_cases:
-        case.update({'debug': True, })
         print('get_contact_matrix', atomtools.geo.get_contact_matrix(**case))
 
 
@@ -177,7 +175,7 @@ def test_ExtDict():
             'ecp': ['lanl2dz'] * 10,
         }
     }
-    x = atomtools.types.ExtDict(test_cases)
+    x = atomtools.ext_types.ExtDict(test_cases)
     print('-'*25+'\n'+'test get/set')
     print(x.get_positions())
     x.set_positions(np.ones((10, 3)))
