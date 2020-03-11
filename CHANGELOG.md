@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 1.9.0/1.9.1
+
+* add ADF logfile support/ fix logfile bug
+
 ## 1.8.7
 
 * fix `method.get_atoms_array()` bug
