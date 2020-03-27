@@ -26,11 +26,15 @@ MAX_ACTIVE_TIME = 3600
 
 
 def get_file_extension(filename):
-    return os.path.splitext(get_absfilename(filename))[-1]
+    if filename:
+        return os.path.splitext(get_absfilename(filename))[-1]
+    return None
 
 
 def get_file_basename(filename):
-    return os.path.splitext(get_absfilename(filename))[0]
+    if filename:
+        return os.path.splitext(get_absfilename(filename))[0]
+    return None
 
 
 def get_file_content(fileobj, size=-1):
@@ -61,6 +65,8 @@ def get_absfilename(fileobj):
             return os.path.realpath(fileobj)
         else:
             return None  # a string has no filename
+    elif isinstance(fileobj, StringIO):
+        return None
     else:
         import pdb
         pdb.set_trace()
@@ -120,8 +126,8 @@ compress_command = {
 def get_uncompressed_fileobj(filename):
     import gzip
     tmpdir = '/tmp/atomtools_{0}'.format(randString())
-    filename = get_absfilename(filename)
-    extension = get_file_extension(filename)
+    absfilename = get_absfilename(filename)
+    extension = get_file_extension(absfilename)
     if not extension in compress_command:
         return filename
 
@@ -133,9 +139,9 @@ def get_uncompressed_fileobj(filename):
     cmd = compress_command[extension]
     if not os.path.exists(tmpdir):
         os.makedirs(tmpdir)
-    tmpfilename = os.path.join(tmpdir, os.path.basename(filename))
+    tmpfilename = os.path.join(tmpdir, os.path.basename(absfilename))
     newfilename = os.path.splitext(tmpfilename)[0]
-    shutil.copyfile(os.path.abspath(filename), tmpfilename)
+    shutil.copyfile(os.path.abspath(absfilename), tmpfilename)
     cmd += ' ' + tmpfilename + \
         '; dos2unix {0} > /dev/null 2>&1 '.format(newfilename)
     os.system(cmd)
