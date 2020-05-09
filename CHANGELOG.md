@@ -1,9 +1,10 @@
 # CHANGELOG
 
 
-## 1.9.3
+## 1.9.3/1.9.3.1
 
 * add constants
+* fix temperature transform
 
 
 

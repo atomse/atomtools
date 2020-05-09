@@ -67,6 +67,8 @@ UNITS = {
 
 }
 
+ZERO_Kelvin = 273.15
+
 
 def get_atomic_unit(length):
     if length == 1:
@@ -117,17 +119,19 @@ def trans_temperature(number, src=None, dest='K'):
         raise ValueError(f'src unit not given')
     src = src.lower()[0]
     dest = dest.lower()[0]
-    assert src in VALID_TEMPERATURE_UNITS and dest in VALID_TEMPERATURE_UNITS, f'src:{src}, dest:{dest}'
+    assert src in VALID_TEMPERATURE_UNITS and \
+        dest in VALID_TEMPERATURE_UNITS, \
+        f'src:{src}, dest:{dest}'
     assert isinstance(number, (int, float)), 'number should be a int/float'
     if src == dest:
         return number
     if src == 'k':
-        number -= 298.15
+        number -= ZERO_Kelvin
     elif src == 'f':
         number = (number - 32) * 5/9
 
     if dest == 'k':
-        number += 298.15
+        number += ZERO_Kelvin
     elif dest == 'f':
         number = (number + 32) * 9/5
     return number
