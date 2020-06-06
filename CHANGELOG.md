@@ -1,6 +1,10 @@
 # CHANGELOG
 
 
+## 1.9.4
+
+* fix filetype when no content
+
 ## 1.9.3/1.9.3.1
 
 * add constants

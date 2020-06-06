@@ -38,7 +38,7 @@ def update_config(path=None):
         MULTIFRAME += conf._sections[MULTIFRAME_NAME][MULTIFRAME_NAME].split()
 
 
-def filetype(fileobj=None):
+def filetype(fileobj=None, is_filename=True):
     """
     >>> filetype("a.gjf")
     gaussian
@@ -51,10 +51,12 @@ def filetype(fileobj=None):
         filename = fileutil.get_uncompressed_filename(filename)
     else:
         filename = fileutil.get_filename(fileobj)
+    content = None
     try:
-        content = fileutil.get_file_content(fileobj, size=PARTIAL_LENGTH)
+        content = fileutil.get_file_content(
+            fileobj, size=PARTIAL_LENGTH, is_filename=is_filename)
     except TypeError:
-        content = None
+        pass
     if filename is None and content is None:
         return None
     logger.debug("filename: %s, content: %s" % (filename, content))
@@ -89,10 +91,10 @@ def support_multiframe(ftype):
 update_config()
 
 
-
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('filename', type=str)
     args = parser.parse_args()
-    logger = modlog.getLogger("Atomtools: Filetype", 'normal', 'FILETYPE_LOGLEVEL')
+    logger = modlog.getLogger("Atomtools: Filetype",
+                              'normal', 'FILETYPE_LOGLEVEL')
     print(filetype(args.filename))

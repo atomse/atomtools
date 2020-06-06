@@ -37,10 +37,17 @@ def get_file_basename(filename):
     return None
 
 
-def get_file_content(fileobj, size=-1):
+def get_file_content(fileobj, size=-1, is_filename=False):
     """
     get content of fileobj
     """
+    if is_filename:
+        if os.path.isfile(fileobj):
+            with open(fileobj, 'rb') as fd:
+                data = fd.read(size)
+            code = chardet.detect(data[:MAX_DETECT_LENGTH])['encoding']
+            return data.decode(code).replace('\r', '')
+        return None
     if hasattr(fileobj, 'read'):
         fileobj.seek(0)
         return fileobj.read().replace('\r', '')
